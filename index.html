@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- Title -->
-    <title>TeslaCam WebViewer</title>
+    <title>TeslaCam Viewer</title>
 
     <!-- Styles -->
     <style>
@@ -167,7 +167,7 @@
   </head>
   <body>
     <section id="main-overlay">
-      <h1>TeslaCam WebViewer</h1>
+      <h1>TeslaCam Viewer</h1>
 
       <div>
         <strong>Select TeslaCam Directory</strong>(Must be in same directory as index.html):<br />
@@ -176,10 +176,6 @@
 
       <div>
         Browse Loaded Clips:
-        <select class="date-select">
-          <option>- - - - - -</option>
-        </select>
-
         <select class="slt-available-clips">
           <option>- - - - - -</option>
         </select>
@@ -312,21 +308,9 @@
   </body>
 
   <script>
-    var carousel = [];
-    var carouselIndex = -1;
-
-    var selectItemIndex;
-
-    var files;
-
-    var playbackRate = 1;
-    var playbackIsPaused = true;
-
     const title = document.querySelector("div.title");
 
     const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
-
-    var dateSelector = document.querySelector("select.date-select");
 
     const availableClipsSelect = document.querySelector(".slt-available-clips");
 
@@ -346,6 +330,9 @@
 
     let clipFiles = [];
     let currentClipIndex = -1;
+
+    let playbackRate = 1;
+    let playbackIsPaused = true;
 
     class TeslaCamClip {
       type = "Unknown";
@@ -458,61 +445,9 @@
       }
     }
 
-    class TeslaCamFile {
-      separator = "/"; //default separator(necessary? not sure)
-      clipType = "SentryClip"; //Recorded/SentryClip...
-      triggerDate = ""; // folder name doubles as the date the video clip was triggered
-      clipDate = ""; // transformed clip name
-      clipName = ""; // the clip name
-      file = ""; // webkit file incase we need other data
-
-      constructor(file) {
-        this.clipName = file.name;
-        this.clipDate = Date.parse(this.parseToDate(file.name));
-        this.getDirectories(file);
-
-        //just in case we need it for the future
-        this.file = file;
-      }
-
-      getDirectories(file) {
-        this.separator = file.webkitRelativePath.replace(file.name, "").substr(-1);
-        var directoryParts = file.webkitRelativePath.split(this.separator);
-        this.clipType = directoryParts[1];
-        this.triggerDate = directoryParts[2];
-      }
-
-      //format to ISO(sorta) - no TZ so defaults to local
-      parseToDate(filename) {
-        let nameArry = filename.split("_");
-        let dateArry = nameArry[0].split("-");
-        let hourArry = nameArry[1].split("-");
-        return dateArry[0] + "-" + dateArry[1] + "-" + dateArry[2] + "T" + hourArry[0] + ":" + hourArry[1] + ":" + hourArry[2];
-      }
-
-      build() {
-        var filePath = "TeslaCam" + this.separator + this.clipType;
-        if (this.clipType != "RecentClips") {
-          filePath += this.separator + this.triggerDate;
-        }
-
-        return filePath + this.separator + this.clipName.replace(/-back.mp4$/gm, "");
-      }
-    }
-
-    function loadVideos(index) {
-      carouselIndex = index;
-
-      title.innerHTML = carousel[index].build();
-      backVideo.src = carousel[index].build() + "-back.mp4";
-      frontVideo.src = carousel[index].build() + "-front.mp4";
-      leftVideo.src = carousel[index].build() + "-left_repeater.mp4";
-      rightVideo.src = carousel[index].build() + "-right_repeater.mp4";
-
-      videos.forEach((video) => {
-        video.classList.remove("hidden");
-      });
-    }
+    //
+    //  DOM UTILS
+    //
 
     function playVideos() {
       videos.forEach((video) => {
@@ -560,16 +495,6 @@
       });
     }
 
-    function loadNextVideo() {
-      carouselIndex = (carouselIndex + 1) % carousel.length;
-      loadVideos(carouselIndex);
-    }
-
-    function loadPreviousVideo() {
-      carouselIndex = Math.max(0, carouselIndex - 1);
-      loadVideos(carouselIndex);
-    }
-
     function isAutoPlayActive() {
       return autoPlayBtn.classList.contains("active");
     }
@@ -602,6 +527,16 @@
       });
     }
 
+    function loadPreviousClip() {
+      currentClipIndex = Math.max(0, currentClipIndex - 1);
+      loadClip(currentClipIndex);
+    }
+
+    function loadNextClip() {
+      currentClipIndex = Math.min(currentClipIndex + 1, clipFiles.length);
+      loadClip(currentClipIndex);
+    }
+
     function loadClipVideos() {
       const currentClip = clipFiles[currentClipIndex];
 
@@ -625,54 +560,6 @@
     //The following code uses webkitdirectory to get all the videos from a directory
     fileBrowserInput.addEventListener("change", async function (e) {
       const files = e.currentTarget.files;
-
-      //// OLD IMPLEMENTATION - START
-      // console.debug(">>> files:", files);
-
-      // const tcFiles = [];
-
-      // //get "back" files to sort from webkitRelativePath
-      // for (let i = 0; i < files.length; i++) {
-      //   var file = files[i];
-      //   if (file.webkitRelativePath.endsWith("-back.mp4")) {
-      //     var tcFile = new TeslaCamFile(file);
-      //     tcFiles.push(tcFile);
-      //   }
-      // }
-
-      // //Sort the files in ascending date
-      // tcFiles.sort(function (a, b) {
-      //   var firstDate = a.clipDate;
-      //   var secondDate = b.clipDate;
-      //   return firstDate - secondDate;
-      // });
-
-      // // Create dropdown for clips
-      // dateSelector.innerHTML = null;
-
-      // const tmpDir = []; // track added directories
-
-      // tcFiles.forEach((tcFile, index) => {
-      //   dir = tcFile.clipType + tcFile.separator + tcFile.triggerDate;
-      //   if (tcFile.clipType == "RecentClips") {
-      //     dir = tcFile.clipType + tcFile.separator + tcFile.clipName.replace(/-back.mp4$/gm, "");
-      //   }
-
-      //   if (!tmpDir.includes(dir)) {
-      //     tmpDir.push(dir);
-      //     var option = document.createElement("option");
-      //     option.innerText = dir;
-      //     option.value = index; // assume that the index is going to be the first clip for each new date.
-      //     dateSelector.appendChild(option);
-      //   }
-      // });
-
-      // carousel = tcFiles;
-      // loadVideos(0);
-
-      //// OLD IMPLEMENTATION - END
-
-      // NEW IMPLEMENTATION
 
       // Group files by Folder and SubFolder
       const groupedFiles = {};
@@ -754,26 +641,21 @@
       clipFiles = tcClips;
 
       loadClip(0);
-
-      // NEW IMPLEMENTATION - END
-    });
-
-    dateSelector.addEventListener("change", function (e) {
-      carouselIndex = parseInt(e.target.options[e.target.selectedIndex].value);
-      loadVideos(carouselIndex);
     });
 
     availableClipsSelect.addEventListener("change", (evt) => {
       console.log(">>> availableClipsSelect - onChange", evt);
+
       const selectClipIndex = parseInt(availableClipsSelect.options[evt.currentTarget.selectedIndex].value);
+
       loadClip(selectClipIndex);
     });
 
     playPauseBtn.addEventListener("click", playPause);
 
-    previous.addEventListener("click", loadPreviousVideo);
+    previous.addEventListener("click", loadPreviousClip);
 
-    next.addEventListener("click", loadNextVideo);
+    next.addEventListener("click", loadNextClip);
 
     autoPlayBtn.addEventListener("click", toggleAutoPlay);
 
@@ -789,15 +671,10 @@
         playVideos();
       });
 
-      video.addEventListener("pause", function (e) {
-        console.debug(">>> video - onPause", e);
+      video.addEventListener("pause", function (evt) {
+        console.debug(">>> video - onPause", evt);
 
-        if (e.target.ended) {
-          if (isAutoPlayActive()) {
-            carouselIndex += 1;
-            loadVideos(carouselIndex);
-          }
-        } else {
+        if (!evt.currentTarget.ended) {
           pauseVideos();
         }
       });
@@ -848,8 +725,7 @@
       const hasNext = loadClipVideos();
       // instead of going to next video go to next clip if autoplay is active
       if (!hasNext && isAutoPlayActive()) {
-        currentClipIndex += 1;
-        loadClip(currentClipIndex);
+        loadNextClip();
       } else if (!hasNext) {
         playbackIsPaused = true;
       }
