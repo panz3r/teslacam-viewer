@@ -179,6 +179,10 @@
         <select class="date-select">
           <option>- - - - - -</option>
         </select>
+
+        <select class="available-clips-select">
+          <option>- - - - - -</option>
+        </select>
       </div>
     </section>
 
@@ -337,6 +341,75 @@
 
     const playbackRateBtns = document.querySelectorAll(".btn-playback-rate");
 
+    class TeslaCamClip {
+      type = "Unknown";
+      date = null;
+      city = "Unknown";
+      frontVideos = [];
+      backVideos = [];
+      leftRepeaterVideos = [];
+      rightRepeaterVideos = [];
+      thumbnailFile = null;
+
+      constructor(type, date, city, files) {
+        this.type = type;
+        this.date = date;
+        this.city = city;
+
+        this.thumbnailFile = files.find((file) => file.name === "thumb.png");
+
+        const sortedFiles = files.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+
+          if (a.name > b.name) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        });
+
+        this.frontVideos = sortedFiles.filter((file) => file.name.endsWith("-front.mp4"));
+        this.backVideos = sortedFiles.filter((file) => file.name.endsWith("-back.mp4"));
+        this.leftRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("-left_repeater.mp4"));
+        this.rightRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("right_repeater.mp4"));
+      }
+
+      getName() {
+        const dateFormatted = Intl.DateTimeFormat(undefined, {
+          weekday: "long",
+          day: "2-digit",
+          month: "long",
+          hour: "numeric",
+          minute: "numeric",
+        }).format(this.date);
+        return dateFormatted + " - " + this.city;
+      }
+
+      /**
+       *  @param clipType {string}
+       *  @param fileList {File[]}
+       */
+      static async fromTeslaCamFileList(clipType, fileList) {
+        if (clipType === "RecentClips") {
+          return new TeslaCamClip(clipType, new Date(), "Unknown", fileList);
+        }
+
+        const eventJsonFile = fileList.find((file) => file.name === "event.json");
+        if (!eventJsonFile) {
+          // Invalid Clip folder - skip
+          return null;
+        }
+
+        const eventJsonText = await eventJsonFile.text();
+        const eventDetails = JSON.parse(eventJsonText);
+
+        return new TeslaCamClip(clipType, new Date(eventDetails.timestamp), eventDetails.city, fileList);
+      }
+    }
+
     class TeslaCamFile {
       separator = "/"; //default separator(necessary? not sure)
       clipType = "SentryClip"; //Recorded/SentryClip...
@@ -468,9 +541,13 @@
     //
 
     //The following code uses webkitdirectory to get all the videos from a directory
-    fileBrowserInput.addEventListener("change", function (e) {
-      var files = e.target.files;
-      tcFiles = [];
+    fileBrowserInput.addEventListener("change", async function (e) {
+      const files = e.currentTarget.files;
+
+      console.debug(">>> files:", files);
+
+      const tcFiles = [];
+
       //get "back" files to sort from webkitRelativePath
       for (let i = 0; i < files.length; i++) {
         var file = files[i];
@@ -488,11 +565,9 @@
       });
 
       // Create dropdown for clips
-      tmpDir = []; //track dir's added
-      // if(document.querySelector("select.date-select") != undefined) {
-      //     document.querySelector("select.date-select").remove()
-      // }
       dateSelector.innerHTML = null;
+
+      const tmpDir = []; // track added directories
 
       tcFiles.forEach((tcFile, index) => {
         dir = tcFile.clipType + tcFile.separator + tcFile.triggerDate;
@@ -511,6 +586,82 @@
 
       carousel = tcFiles;
       loadVideos(0);
+
+      // NEW IMPLEMENTATION
+
+      // Group files by Folder and SubFolder
+      const groupedFiles = {};
+      for (const file of fileBrowserInput.files) {
+        const filePathSegments = file.webkitRelativePath.split("/");
+
+        const clipType = filePathSegments[1];
+        const clipFolderName = filePathSegments[2];
+
+        if (clipType === "RecentClips") {
+          groupedFiles[clipType] = [...(groupedFiles[clipType] || []), file];
+        } else {
+          const clipsGroup = groupedFiles[clipType] || {};
+
+          groupedFiles[clipType] = {
+            ...clipsGroup,
+            [clipFolderName]: [...(clipsGroup[clipFolderName] || []), file],
+          };
+        }
+      }
+
+      console.debug(">>> groupedFiles", groupedFiles);
+
+      // create TeslaCamClips from files lists
+      const tcClips = [];
+      for await (const clipType of Object.keys(groupedFiles)) {
+        console.log(">>> clipType", clipType);
+        console.log(">>> clips", groupedFiles[clipType]);
+
+        if (clipType === "RecentClips") {
+          const tcClip = await TeslaCamClip.fromTeslaCamFileList(clipType, groupedFiles[clipType]);
+          tcClips.push(tcClip);
+        } else {
+          for await (const clipFolder of Object.keys(groupedFiles[clipType])) {
+            const tcClip = await TeslaCamClip.fromTeslaCamFileList(clipType, groupedFiles[clipType][clipFolder]);
+            if (!!tcClip) {
+              tcClips.push(tcClip);
+            }
+          }
+        }
+      }
+
+      console.debug(">>> tcClips", tcClips);
+
+      const clipsByType = tcClips.reduce((byType, clip, clipIndex) => {
+        return {
+          ...byType,
+          [clip.type]: [...(byType[clip.type] || []), clipIndex],
+        };
+      }, {});
+
+      console.debug(">>> tcClipsByType", clipsByType);
+
+      const availableClipsSelect = document.querySelector(".available-clips-select");
+      availableClipsSelect.innerHTML = null;
+
+      Object.keys(clipsByType).forEach((clipType) => {
+        const selectOptionsGroup = document.createElement("optgroup");
+        selectOptionsGroup.label = clipType;
+
+        clipsByType[clipType].forEach((clipIndex) => {
+          const clip = tcClips[clipIndex];
+
+          const selectOption = document.createElement("option");
+          selectOption.label = clip.getName();
+          selectOption.value = clipIndex;
+
+          selectOptionsGroup.appendChild(selectOption);
+        });
+
+        availableClipsSelect.appendChild(selectOptionsGroup);
+      });
+
+      // NEW IMPLEMENTATION - END
     });
 
     dateSelector.addEventListener("change", function (e) {
