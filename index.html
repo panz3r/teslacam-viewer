@@ -51,13 +51,18 @@
       button {
         border-radius: 8px;
         border: 1px solid transparent;
-        padding: 0.6em 1.2em;
-        font-size: 1em;
-        font-weight: 500;
-        font-family: inherit;
+        /* padding: 0.6em 1.2em; */
+        /* font-size: 1em; */
+        /* font-weight: 500; */
+        /* font-family: inherit; */
         background-color: #1a1a1a;
         cursor: pointer;
         transition: border-color 0.25s;
+      }
+
+      button.active {
+        background-color: #646cff;
+        border-color: #646cff;
       }
 
       button:hover {
@@ -86,12 +91,12 @@
       }
 
       video.left_repeater {
-        top: 50%;
+        top: 25%;
         left: 0;
       }
 
       video.right_repeater {
-        top: 50%;
+        top: 25%;
         right: 0;
       }
 
@@ -165,7 +170,7 @@
       <h1>Welcome to TeslaCam WebViewer</h1>
 
       <div>
-        <strong>Select TeslaCam Directory</strong>(Must be in same directory as Index.html):<br />
+        <strong>Select TeslaCam Directory</strong>(Must be in same directory as index.html):<br />
         <input type="file" id="fileBrowser" accept="video/mp4" webkitdirectory multiple />
       </div>
 
@@ -179,23 +184,88 @@
 
     <section id="global-controls">
       <div class="controls">
-        <button class="previous">&lt;&lt;</button>
-        <button class="skip" onclick="skipTo(-5)">-5</button>
-        <button class="skip" onclick="skipTo(-3)">-3</button>
-        <button onclick="playPause()">PLAY/PAUSE</button>
-        <button class="skip" onclick="skipTo(3)">3</button>
-        <button class="skip" onclick="skipTo(5)">5</button>
-        <button class="next">&gt;&gt;</button>
+        <button class="previous">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path d="M220-240v-480h80v480h-80Zm520 0L380-480l360-240v480Zm-80-240Zm0 90v-180l-136 90 136 90Z" />
+          </svg>
+        </button>
+        <button class="skip" onclick="skipTo(-10)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80ZM360-320v-180h-60v-60h120v240h-60Zm140 0q-17 0-28.5-11.5T460-360v-160q0-17 11.5-28.5T500-560h80q17 0 28.5 11.5T620-520v160q0 17-11.5 28.5T580-320h-80Zm20-60h40v-120h-40v120Z"
+            />
+          </svg>
+        </button>
+        <button class="skip" onclick="skipTo(-5)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80ZM380-320v-60h120v-40H380v-140h180v60H440v40h80q17 0 28.5 11.5T560-420v60q0 17-11.5 28.5T520-320H380Z"
+            />
+          </svg>
+        </button>
 
-        <input checked type="checkbox" name="autoplay" />Autoplay
+        <button class="btn-play-pause">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed" class="hidden">
+            <path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"
+            />
+          </svg>
+        </button>
+
+        <button class="skip" onclick="skipTo(5)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-800h6l-62-62 56-58 160 160-160 160-56-58 62-62h-6q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440h80q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80ZM380-320v-60h120v-40H380v-140h180v60H440v40h80q17 0 28.5 11.5T560-420v60q0 17-11.5 28.5T520-320H380Z"
+            />
+          </svg>
+        </button>
+        <button class="skip" onclick="skipTo(10)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M360-320v-180h-60v-60h120v240h-60Zm140 0q-17 0-28.5-11.5T460-360v-160q0-17 11.5-28.5T500-560h80q17 0 28.5 11.5T620-520v160q0 17-11.5 28.5T580-320h-80Zm20-60h40v-120h-40v120ZM480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-800h6l-62-62 56-58 160 160-160 160-56-58 62-62h-6q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440h80q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z"
+            />
+          </svg>
+        </button>
+        <button class="next">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path d="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Zm80-240Zm0 90 136-90-136-90v180Z" />
+          </svg>
+        </button>
+
+        <button class="btn-autoplay active">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M380-300v-360l280 180-280 180ZM480-40q-108 0-202.5-49.5T120-228v108H40v-240h240v80h-98q51 75 129.5 117.5T480-120q115 0 208.5-66T820-361l78 18q-45 136-160 219.5T480-40ZM42-520q7-67 32-128.5T143-762l57 57q-32 41-52 87.5T123-520H42Zm214-241-57-57q53-44 114-69.5T440-918v80q-51 5-97 25t-87 52Zm449 0q-41-32-87.5-52T520-838v-80q67 6 128.5 31T762-818l-57 57Zm133 241q-5-51-25-97.5T761-705l57-57q44 52 69 113.5T918-520h-80Z"
+            />
+          </svg>
+        </button>
       </div>
 
       <div class="speed">
-        <button onclick="playRate(0.5)">0.5x</button>
-        <button onclick="playRate(1)">1x</button>
-        <button onclick="playRate(2)">2x</button>
-        <button onclick="playRate(3)">3x</button>
-        <button onclick="playRate(8)">8x</button>
+        <button class="btn-playback-rate" data-rate="0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M120-280v-80h80v80h-80Zm400 0 120-200-120-200h80l80 133 80-133h80L720-480l120 200h-80l-80-133-80 133h-80Zm-280 0v-80h160v-80H240v-240h240v80H320v80h80q33 0 56.5 23.5T480-440v80q0 33-23.5 56.5T400-280H240Z"
+            />
+          </svg>
+        </button>
+        <button class="btn-playback-rate active" data-rate="1">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M240-280v-320h-80v-80h160v400h-80Zm174 0 126-212-114-188h94l66 110 68-110h92L634-492l126 212h-94l-80-134-80 134h-92Z"
+            />
+          </svg>
+        </button>
+        <button class="btn-playback-rate" data-rate="2">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+            <path
+              d="M200-280v-160q0-33 23.5-56.5T280-520h80v-80H200v-80h160q33 0 56.5 23.5T440-600v80q0 33-23.5 56.5T360-440h-80v80h160v80H200Zm280 0 120-200-120-200h80l80 133 80-133h80L680-480l120 200h-80l-80-133-80 133h-80Z"
+            />
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -238,26 +308,34 @@
   </body>
 
   <script>
-    var carouselIndex;
+    var carousel = [];
+    var carouselIndex = -1;
+
     var selectItemIndex;
+
     var files;
 
     var playbackRate = 1;
-    var playPauseFlag = true;
+    var playbackIsPaused = false;
 
-    var carousel = [];
-    var title = document.querySelector("div.title");
-    var backVideo = document.querySelector("video.back");
-    var frontVideo = document.querySelector("video.front");
-    var leftVideo = document.querySelector("video.left_repeater");
-    var rightVideo = document.querySelector("video.right_repeater");
-    var next = document.querySelector("button.next");
-    var previous = document.querySelector("button.previous");
-    var setVideos = document.querySelector("button.setVideos");
+    const title = document.querySelector("div.title");
 
-    var dateSelector = document.querySelector("select.date-select");
+    const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
+    const dateSelector = document.querySelector("select.date-select");
 
-    var skip = document.querySelector("button.skip");
+    const videos = document.querySelectorAll("video");
+    const backVideo = document.querySelector("video.back");
+    const frontVideo = document.querySelector("video.front");
+    const leftVideo = document.querySelector("video.left_repeater");
+    const rightVideo = document.querySelector("video.right_repeater");
+
+    const playPauseBtn = document.querySelector(".btn-play-pause");
+    const next = document.querySelector("button.next");
+    const previous = document.querySelector("button.previous");
+    const skip = document.querySelector("button.skip");
+    const autoPlayBtn = document.querySelector(".btn-autoplay");
+
+    const playbackRateBtns = document.querySelectorAll(".btn-playback-rate");
 
     class TeslaCamFile {
       separator = "/"; //default separator(necessary? not sure)
@@ -301,8 +379,96 @@
       }
     }
 
+    function loadVideos(index) {
+      carouselIndex = index;
+
+      title.innerHTML = carousel[index].build();
+      backVideo.src = carousel[index].build() + "-back.mp4";
+      frontVideo.src = carousel[index].build() + "-front.mp4";
+      leftVideo.src = carousel[index].build() + "-left_repeater.mp4";
+      rightVideo.src = carousel[index].build() + "-right_repeater.mp4";
+
+      videos.forEach((video) => {
+        video.classList.remove("hidden");
+      });
+    }
+
+    function playVideos() {
+      videos.forEach((video) => {
+        video.play();
+        video.playbackRate = playbackRate;
+      });
+    }
+
+    function setPlaybackRate(evt) {
+      console.log(">> setPlaybackRate", evt);
+
+      const selectedPlaybackRateBtn = evt.currentTarget;
+
+      playbackRate = parseFloat(selectedPlaybackRateBtn.getAttribute("data-rate"));
+
+      playbackRateBtns.forEach((playbackRateBtn) => playbackRateBtn.classList.remove("active"));
+      selectedPlaybackRateBtn.classList.add("active");
+
+      videos.forEach((video) => {
+        video.playbackRate = playbackRate;
+      });
+    }
+
+    function pauseVideos() {
+      videos.forEach((video) => {
+        video.pause();
+      });
+    }
+
+    function playPause() {
+      if (playbackIsPaused) {
+        playVideos();
+      } else {
+        pauseVideos();
+      }
+
+      playbackIsPaused = !playbackIsPaused;
+
+      updatePlayPauseButton();
+    }
+
+    function skipTo(seconds) {
+      videos.forEach((video) => {
+        video.currentTime += seconds;
+      });
+    }
+
+    function loadNextVideo() {
+      carouselIndex = (carouselIndex + 1) % carousel.length;
+      loadVideos(carouselIndex);
+    }
+
+    function loadPreviousVideo() {
+      carouselIndex = Math.max(0, carouselIndex - 1);
+      loadVideos(carouselIndex);
+    }
+
+    function isAutoPlayActive() {
+      return autoPlayBtn.classList.contains("active");
+    }
+
+    function toggleAutoPlay() {
+      autoPlayBtn.classList.toggle("active");
+    }
+
+    function updatePlayPauseButton() {
+      playPauseBtn.querySelectorAll("svg").forEach((svg) => {
+        svg.classList.toggle("hidden");
+      });
+    }
+
+    //
+    //  EVENT LISTENERS
+    //
+
     //The following code uses webkitdirectory to get all the videos from a directory
-    document.querySelector("input[type=file][id=fileBrowser]").addEventListener("change", function (e) {
+    fileBrowserInput.addEventListener("change", function (e) {
       var files = e.target.files;
       tcFiles = [];
       //get "back" files to sort from webkitRelativePath
@@ -352,55 +518,17 @@
       loadVideos(carouselIndex);
     });
 
-    const videos = document.querySelectorAll("video");
+    playPauseBtn.addEventListener("click", playPause);
 
-    function loadVideos(index) {
-      title.innerHTML = carousel[index].build();
-      backVideo.src = carousel[index].build() + "-back.mp4";
-      frontVideo.src = carousel[index].build() + "-front.mp4";
-      leftVideo.src = carousel[index].build() + "-left_repeater.mp4";
-      rightVideo.src = carousel[index].build() + "-right_repeater.mp4";
+    previous.addEventListener("click", loadPreviousVideo);
 
-      videos.forEach((video) => {
-        video.classList.remove("fullscreen", "hidden");
-      });
+    next.addEventListener("click", loadNextVideo);
 
-      frontVideo.classList.add("fullscreen");
-    }
+    autoPlayBtn.addEventListener("click", toggleAutoPlay);
 
-    function playVideos() {
-      videos.forEach((video) => {
-        video.play();
-        video.playbackRate = playbackRate;
-      });
-    }
-
-    function playRate(rate) {
-      playbackRate = rate;
-      playVideos();
-    }
-
-    function pauseVideos() {
-      videos.forEach((video) => {
-        video.pause();
-      });
-    }
-
-    function playPause() {
-      if (playPauseFlag != true) {
-        playVideos();
-        playPauseFlag = true;
-      } else {
-        pauseVideos();
-        playPauseFlag = false;
-      }
-    }
-
-    function skipTo(seconds) {
-      videos.forEach((video) => {
-        video.currentTime += seconds;
-      });
-    }
+    playbackRateBtns.forEach((playbackRateBtn) => {
+      playbackRateBtn.addEventListener("click", setPlaybackRate);
+    });
 
     //Add listeners for play, pause and click buttons for each video.
     videos.forEach((video) => {
@@ -412,7 +540,7 @@
       video.addEventListener("pause", function (e) {
         console.log(e);
         if (e.target.ended) {
-          if (document.querySelector("input[name=autoplay]").checked) {
+          if (isAutoPlayActive()) {
             carouselIndex += 1;
             loadVideos(carouselIndex);
           }
@@ -453,27 +581,15 @@
 
       video.addEventListener("canplaythrough", function (e) {
         console.log("Can Play Through");
-        if (document.querySelector("input[name=autoplay]").checked) {
+        if (isAutoPlayActive()) {
           playVideos();
         }
       });
     });
 
-    var carouselIndex = 0;
-
-    next.addEventListener("click", function () {
-      carouselIndex += 1;
-      loadVideos(carouselIndex);
-    });
-
-    previous.addEventListener("click", function () {
-      carouselIndex -= 1;
-      loadVideos(carouselIndex);
-    });
-
     backVideo.addEventListener("ended", function () {
       console.log("Ended");
-      if (document.querySelector("input[name=autoplay]").checked) {
+      if (isAutoPlayActive()) {
         carouselIndex += 1;
         loadVideos(carouselIndex);
       }
