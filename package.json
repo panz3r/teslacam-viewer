@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Simple Web-based Tesla Dashcam video Viewer",
   "keywords": [],
-  "author": "Mattia Panzeri (https://github.com/panz3r)",
+  "author": {
+    "name": "Mattia Panzeri",
+    "url": "https://github.com/panz3r"
+  },
   "license": "GPL-3.0-only",
   "private": true,
   "repository": "github:panz3r/teslacam-viewer",
