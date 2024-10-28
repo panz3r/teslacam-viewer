@@ -1,0 +1,110 @@
+doctype html
+html(lang="en")
+  head
+    //- Meta
+    include includes/meta.pug
+
+    //- Title
+    title #{name}
+
+    //- Styles
+    style
+      include:clean-css includes/index.css
+
+  body
+    section#main-overlay
+      h1 #{name}
+
+      div
+        strong Select TeslaCam Directory
+        | &nbsp;(Must be in same directory as index.html):
+        br
+        input#fileBrowser(type="file" accept="video/mp4" webkitdirectory multiple)
+
+      div
+        | Browse Loaded Clips:
+        select.slt-available-clips
+          option - - - - - -
+
+    section#global-controls
+      .controls
+        button.previous
+          include assets/skip_previous.svg
+
+        button.skip(onclick="skipTo(-10)")
+          include assets/replay_10.svg
+
+        button.skip(onclick="skipTo(-5)")
+          include assets/replay_5.svg
+
+        button.btn-play-pause
+          include assets/play_arrow.svg
+
+          include assets/pause.svg
+
+        button.skip(onclick="skipTo(5)")
+          include assets/forward_5.svg
+
+        button.skip(onclick="skipTo(10)")
+          include assets/forward_10.svg
+
+        button.next
+          include assets/skip_next.svg
+
+        button.btn-autoplay
+          include assets/autoplay.svg
+
+      .speed
+        button.btn-playback-rate(data-rate="0.5")
+          include assets/speed_0_5x.svg
+
+        button.btn-playback-rate.active(data-rate="1")
+          include assets/speed_1x.svg
+
+        button.btn-playback-rate(data-rate="2")
+          include assets/speed_2x.svg
+
+    section#video-players
+      .title
+        span No Videos Loaded
+
+      div
+        video.front.fullscreen.hidden(src="")
+
+        video.left_repeater.hidden(src="")
+
+        video.right_repeater.hidden(src="")
+
+        video.back.hidden(src="")
+
+    section#readme
+      h2 README
+      hr
+      h3 Directory Placement
+      p 
+      | This 
+      code index.html
+      |  file 
+      strong must
+      |  be at the same level as the 
+      code TeslaCam
+      |  folder which can be placed directly on the root of the USB drive.
+
+      h3 Example:
+
+      code
+        | Root Folder
+        br
+        | &nbsp;|- index.html
+        br
+        | &nbsp;|- TeslaCam(USB Drive Top Level Folder)
+        br
+        | &nbsp;&nbsp;&nbsp;|- Saved Clips
+        br
+        | &nbsp;&nbsp;&nbsp;|- Sentry Videos
+        br
+        | &nbsp;&nbsp;&nbsp;|- ...
+        br
+
+    script
+      include:terser includes/index.js
