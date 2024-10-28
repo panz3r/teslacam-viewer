@@ -167,7 +167,7 @@
   </head>
   <body>
     <section id="main-overlay">
-      <h1>Welcome to TeslaCam WebViewer</h1>
+      <h1>TeslaCam WebViewer</h1>
 
       <div>
         <strong>Select TeslaCam Directory</strong>(Must be in same directory as index.html):<br />
@@ -180,7 +180,7 @@
           <option>- - - - - -</option>
         </select>
 
-        <select class="available-clips-select">
+        <select class="slt-available-clips">
           <option>- - - - - -</option>
         </select>
       </div>
@@ -209,10 +209,10 @@
         </button>
 
         <button class="btn-play-pause">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed" class="hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
             <path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z" />
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed" class="hidden">
             <path
               d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"
             />
@@ -239,7 +239,7 @@
           </svg>
         </button>
 
-        <button class="btn-autoplay active">
+        <button class="btn-autoplay">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
             <path
               d="M380-300v-360l280 180-280 180ZM480-40q-108 0-202.5-49.5T120-228v108H40v-240h240v80h-98q51 75 129.5 117.5T480-120q115 0 208.5-66T820-361l78 18q-45 136-160 219.5T480-40ZM42-520q7-67 32-128.5T143-762l57 57q-32 41-52 87.5T123-520H42Zm214-241-57-57q53-44 114-69.5T440-918v80q-51 5-97 25t-87 52Zm449 0q-41-32-87.5-52T520-838v-80q67 6 128.5 31T762-818l-57 57Zm133 241q-5-51-25-97.5T761-705l57-57q44 52 69 113.5T918-520h-80Z"
@@ -320,12 +320,15 @@
     var files;
 
     var playbackRate = 1;
-    var playbackIsPaused = false;
+    var playbackIsPaused = true;
 
     const title = document.querySelector("div.title");
 
     const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
-    const dateSelector = document.querySelector("select.date-select");
+
+    var dateSelector = document.querySelector("select.date-select");
+
+    const availableClipsSelect = document.querySelector(".slt-available-clips");
 
     const videos = document.querySelectorAll("video");
     const backVideo = document.querySelector("video.back");
@@ -341,15 +344,22 @@
 
     const playbackRateBtns = document.querySelectorAll(".btn-playback-rate");
 
+    let clipFiles = [];
+    let currentClipIndex = -1;
+
     class TeslaCamClip {
       type = "Unknown";
       date = null;
       city = "Unknown";
+      thumbnailFile = null;
+
       frontVideos = [];
       backVideos = [];
       leftRepeaterVideos = [];
       rightRepeaterVideos = [];
-      thumbnailFile = null;
+
+      currentVideosIndex = -1;
+      totalVideosCount = -1;
 
       constructor(type, date, city, files) {
         this.type = type;
@@ -375,17 +385,55 @@
         this.backVideos = sortedFiles.filter((file) => file.name.endsWith("-back.mp4"));
         this.leftRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("-left_repeater.mp4"));
         this.rightRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("right_repeater.mp4"));
+
+        this.totalVideosCount = Math.min(
+          this.frontVideos.length,
+          this.backVideos.length,
+          this.leftRepeaterVideos.length,
+          this.rightRepeaterVideos.length
+        );
+      }
+
+      reset() {
+        this.currentVideosIndex = -1;
       }
 
       getName() {
         const dateFormatted = Intl.DateTimeFormat(undefined, {
-          weekday: "long",
+          weekday: "short",
           day: "2-digit",
-          month: "long",
+          month: "short",
           hour: "numeric",
           minute: "numeric",
         }).format(this.date);
-        return dateFormatted + " - " + this.city;
+
+        if (this.type !== "RecentClips") {
+          return dateFormatted + " - " + this.city;
+        } else {
+          return dateFormatted;
+        }
+      }
+
+      getCurrentVideos() {
+        return {
+          front: this.frontVideos[this.currentVideosIndex].webkitRelativePath,
+          back: this.backVideos[this.currentVideosIndex].webkitRelativePath,
+          left: this.leftRepeaterVideos[this.currentVideosIndex].webkitRelativePath,
+          right: this.rightRepeaterVideos[this.currentVideosIndex].webkitRelativePath,
+        };
+      }
+
+      getNextVideos() {
+        this.currentVideosIndex += 1;
+        if (this.currentVideosIndex >= this.totalVideosCount) {
+          // reset Clip for next time
+          this.reset();
+
+          // return null to signal there are no more videos to play for this clip
+          return null;
+        }
+
+        return this.getCurrentVideos();
       }
 
       /**
@@ -537,6 +585,40 @@
     }
 
     //
+    //  APP LOGIC
+    //
+
+    function loadClip(clipIndex) {
+      if (clipIndex < 0 || clipIndex >= clipFiles.length) {
+        throw new Error("Invalid clip index selected");
+      }
+
+      console.debug(">>> loadClip:", clipFiles[clipIndex]);
+      currentClipIndex = clipIndex;
+
+      const isLoaded = loadClipVideos();
+      videos.forEach((video) => {
+        video.classList.toggle("hidden", !isLoaded);
+      });
+    }
+
+    function loadClipVideos() {
+      const currentClip = clipFiles[currentClipIndex];
+
+      const currentClipVideos = currentClip.getNextVideos();
+      if (!currentClipVideos) {
+        return false;
+      }
+
+      frontVideo.src = currentClipVideos.front;
+      leftVideo.src = currentClipVideos.left;
+      rightVideo.src = currentClipVideos.right;
+      backVideo.src = currentClipVideos.back;
+
+      return true;
+    }
+
+    //
     //  EVENT LISTENERS
     //
 
@@ -544,48 +626,51 @@
     fileBrowserInput.addEventListener("change", async function (e) {
       const files = e.currentTarget.files;
 
-      console.debug(">>> files:", files);
+      //// OLD IMPLEMENTATION - START
+      // console.debug(">>> files:", files);
 
-      const tcFiles = [];
+      // const tcFiles = [];
 
-      //get "back" files to sort from webkitRelativePath
-      for (let i = 0; i < files.length; i++) {
-        var file = files[i];
-        if (file.webkitRelativePath.endsWith("-back.mp4")) {
-          var tcFile = new TeslaCamFile(file);
-          tcFiles.push(tcFile);
-        }
-      }
+      // //get "back" files to sort from webkitRelativePath
+      // for (let i = 0; i < files.length; i++) {
+      //   var file = files[i];
+      //   if (file.webkitRelativePath.endsWith("-back.mp4")) {
+      //     var tcFile = new TeslaCamFile(file);
+      //     tcFiles.push(tcFile);
+      //   }
+      // }
 
-      //Sort the files in ascending date
-      tcFiles.sort(function (a, b) {
-        var firstDate = a.clipDate;
-        var secondDate = b.clipDate;
-        return firstDate - secondDate;
-      });
+      // //Sort the files in ascending date
+      // tcFiles.sort(function (a, b) {
+      //   var firstDate = a.clipDate;
+      //   var secondDate = b.clipDate;
+      //   return firstDate - secondDate;
+      // });
 
-      // Create dropdown for clips
-      dateSelector.innerHTML = null;
+      // // Create dropdown for clips
+      // dateSelector.innerHTML = null;
 
-      const tmpDir = []; // track added directories
+      // const tmpDir = []; // track added directories
 
-      tcFiles.forEach((tcFile, index) => {
-        dir = tcFile.clipType + tcFile.separator + tcFile.triggerDate;
-        if (tcFile.clipType == "RecentClips") {
-          dir = tcFile.clipType + tcFile.separator + tcFile.clipName.replace(/-back.mp4$/gm, "");
-        }
+      // tcFiles.forEach((tcFile, index) => {
+      //   dir = tcFile.clipType + tcFile.separator + tcFile.triggerDate;
+      //   if (tcFile.clipType == "RecentClips") {
+      //     dir = tcFile.clipType + tcFile.separator + tcFile.clipName.replace(/-back.mp4$/gm, "");
+      //   }
 
-        if (!tmpDir.includes(dir)) {
-          tmpDir.push(dir);
-          var option = document.createElement("option");
-          option.innerText = dir;
-          option.value = index; // assume that the index is going to be the first clip for each new date.
-          dateSelector.appendChild(option);
-        }
-      });
+      //   if (!tmpDir.includes(dir)) {
+      //     tmpDir.push(dir);
+      //     var option = document.createElement("option");
+      //     option.innerText = dir;
+      //     option.value = index; // assume that the index is going to be the first clip for each new date.
+      //     dateSelector.appendChild(option);
+      //   }
+      // });
 
-      carousel = tcFiles;
-      loadVideos(0);
+      // carousel = tcFiles;
+      // loadVideos(0);
+
+      //// OLD IMPLEMENTATION - END
 
       // NEW IMPLEMENTATION
 
@@ -619,7 +704,9 @@
 
         if (clipType === "RecentClips") {
           const tcClip = await TeslaCamClip.fromTeslaCamFileList(clipType, groupedFiles[clipType]);
-          tcClips.push(tcClip);
+          if (!!tcClip) {
+            tcClips.push(tcClip);
+          }
         } else {
           for await (const clipFolder of Object.keys(groupedFiles[clipType])) {
             const tcClip = await TeslaCamClip.fromTeslaCamFileList(clipType, groupedFiles[clipType][clipFolder]);
@@ -630,8 +717,12 @@
         }
       }
 
+      // sort Clips by event date (descending)
+      tcClips.sort((a, b) => b.date - a.date);
+
       console.debug(">>> tcClips", tcClips);
 
+      // group Clips by type to ease rendering
       const clipsByType = tcClips.reduce((byType, clip, clipIndex) => {
         return {
           ...byType,
@@ -641,7 +732,6 @@
 
       console.debug(">>> tcClipsByType", clipsByType);
 
-      const availableClipsSelect = document.querySelector(".available-clips-select");
       availableClipsSelect.innerHTML = null;
 
       Object.keys(clipsByType).forEach((clipType) => {
@@ -661,12 +751,22 @@
         availableClipsSelect.appendChild(selectOptionsGroup);
       });
 
+      clipFiles = tcClips;
+
+      loadClip(0);
+
       // NEW IMPLEMENTATION - END
     });
 
     dateSelector.addEventListener("change", function (e) {
       carouselIndex = parseInt(e.target.options[e.target.selectedIndex].value);
       loadVideos(carouselIndex);
+    });
+
+    availableClipsSelect.addEventListener("change", (evt) => {
+      console.log(">>> availableClipsSelect - onChange", evt);
+      const selectClipIndex = parseInt(availableClipsSelect.options[evt.currentTarget.selectedIndex].value);
+      loadClip(selectClipIndex);
     });
 
     playPauseBtn.addEventListener("click", playPause);
@@ -684,12 +784,14 @@
     //Add listeners for play, pause and click buttons for each video.
     videos.forEach((video) => {
       video.addEventListener("play", function (e) {
-        console.log(e);
+        console.debug(">>> video - onPlay", e);
+
         playVideos();
       });
 
       video.addEventListener("pause", function (e) {
-        console.log(e);
+        console.debug(">>> video - onPause", e);
+
         if (e.target.ended) {
           if (isAutoPlayActive()) {
             carouselIndex += 1;
@@ -701,7 +803,8 @@
       });
 
       video.addEventListener("click", function (e) {
-        console.log(">>> video onClick", e);
+        console.debug(">>> video - onClick", e);
+
         const currentVideo = e.target;
 
         const currentTime = currentVideo.currentTime;
@@ -729,20 +832,26 @@
           currentVideo.classList.add("fullscreen");
         }
       });
-
-      video.addEventListener("canplaythrough", function (e) {
-        console.log("Can Play Through");
-        if (isAutoPlayActive()) {
-          playVideos();
-        }
-      });
     });
 
-    backVideo.addEventListener("ended", function () {
-      console.log("Ended");
-      if (isAutoPlayActive()) {
-        carouselIndex += 1;
-        loadVideos(carouselIndex);
+    frontVideo.addEventListener("canplaythrough", function (evt) {
+      console.debug(">>> frontVideo - onCanPlayThrough", evt, playbackIsPaused);
+
+      if (!playbackIsPaused) {
+        playVideos();
+      }
+    });
+
+    frontVideo.addEventListener("ended", function (evt) {
+      console.debug(">>> frontVideo - onEnded", evt);
+
+      const hasNext = loadClipVideos();
+      // instead of going to next video go to next clip if autoplay is active
+      if (!hasNext && isAutoPlayActive()) {
+        currentClipIndex += 1;
+        loadClip(currentClipIndex);
+      } else if (!hasNext) {
+        playbackIsPaused = true;
       }
     });
   </script>
