@@ -9,7 +9,7 @@ html(lang="en")
 
     //- Styles
     style
-      include:clean-css includes/index.css
+      include:clean-css styles/index.css
 
   body
     header
@@ -42,10 +42,10 @@ html(lang="en")
         button.previous
           include:svgo assets/skip_previous.svg
 
-        button.skip(onclick="skipTo(-10)")
+        button.btn-skip(data-skip="-10")
           include:svgo assets/replay_10.svg
 
-        button.skip(onclick="skipTo(-5)")
+        button.btn-skip(data-skip="-5")
           include:svgo assets/replay_5.svg
 
         button.btn-play-pause
@@ -53,10 +53,10 @@ html(lang="en")
 
           include:svgo assets/pause.svg
 
-        button.skip(onclick="skipTo(5)")
+        button.btn-skip(data-skip="5")
           include:svgo assets/forward_5.svg
 
-        button.skip(onclick="skipTo(10)")
+        button.btn-skip(data-skip="10")
           include:svgo assets/forward_10.svg
 
         button.next
@@ -118,4 +118,4 @@ html(lang="en")
         br
 
     script
-      include:terser includes/index.js
+      include:terser js/index.js
