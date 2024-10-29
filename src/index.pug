@@ -12,6 +12,13 @@ html(lang="en")
       include:clean-css includes/index.css
 
   body
+    header
+      .header-container
+        span.icon-container.btn-sidebar-toggle
+          include assets/list.svg
+
+        h3#title &nbsp;
+
     section#main-overlay
       h1 #{name}
 
@@ -21,12 +28,16 @@ html(lang="en")
         br
         input#fileBrowser(type="file" accept="video/mp4" webkitdirectory multiple)
 
-      div
-        | Browse Loaded Clips:
-        select.slt-available-clips
-          option - - - - - -
+    section#sidebar.closed
+      #sidebar-header
+        span.icon-container.btn-sidebar-toggle
+          include assets/list.svg
 
-    section#global-controls
+        h3 Clips
+
+      div#clips-list
+
+    section#global-controls.hidden
       .controls
         button.previous
           include assets/skip_previous.svg

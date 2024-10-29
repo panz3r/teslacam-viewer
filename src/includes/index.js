@@ -1,8 +1,11 @@
-const title = document.querySelector("div.title");
-
 const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
 
-const availableClipsSelect = document.querySelector(".slt-available-clips");
+const sidebarToggleBtns = document.querySelectorAll(".btn-sidebar-toggle");
+
+const sidebar = document.querySelector("#sidebar");
+const clipsList = document.querySelector("#clips-list");
+
+const clipTitleLabel = document.querySelector("#title");
 
 const videos = document.querySelectorAll("video");
 const backVideo = document.querySelector("video.back");
@@ -10,6 +13,7 @@ const frontVideo = document.querySelector("video.front");
 const leftVideo = document.querySelector("video.left_repeater");
 const rightVideo = document.querySelector("video.right_repeater");
 
+const controlsSection = document.querySelector("#global-controls");
 const playPauseBtn = document.querySelector(".btn-play-pause");
 const next = document.querySelector("button.next");
 const previous = document.querySelector("button.previous");
@@ -75,20 +79,32 @@ class TeslaCamClip {
     this.currentVideosIndex = -1;
   }
 
-  getName() {
-    const dateFormatted = Intl.DateTimeFormat(undefined, {
-      weekday: "short",
-      day: "2-digit",
-      month: "short",
-      hour: "numeric",
-      minute: "numeric",
-    }).format(this.date);
+  getTitle() {
+    const dateFormatted = this.getTimestamp();
 
     if (this.type !== "RecentClips") {
       return dateFormatted + " - " + this.city;
     } else {
       return dateFormatted;
     }
+  }
+
+  getTimestamp() {
+    return Intl.DateTimeFormat(undefined, {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      hour: "numeric",
+      minute: "numeric",
+    }).format(this.date);
+  }
+
+  getLocation() {
+    return this.type !== "RecentClips" ? this.city : "";
+  }
+
+  getThumbnailUrl() {
+    return URL.createObjectURL(this.thumbnailFile);
   }
 
   getCurrentVideos() {
@@ -138,6 +154,14 @@ class TeslaCamClip {
 //
 //  DOM UTILS
 //
+
+function sidebarToggle() {
+  sidebar.classList.toggle("closed");
+}
+
+function sidebarClose() {
+  sidebar.classList.add("closed");
+}
 
 function playVideos() {
   videos.forEach((video) => {
@@ -203,6 +227,61 @@ function updatePlayPauseButton() {
 //  APP LOGIC
 //
 
+function renderClipsList() {
+  // group Clips by type to ease rendering
+  const clipsByType = clipFiles.reduce((byType, clip, clipIndex) => {
+    return {
+      ...byType,
+      [clip.type]: [...(byType[clip.type] || []), clipIndex],
+    };
+  }, {});
+
+  console.debug(">>> tcClipsByType", clipsByType);
+
+  Object.keys(clipsByType).forEach((clipType) => {
+    let typeSectionDiv = document.createElement("div");
+
+    const typeSectionTitle = document.createElement("h4");
+    typeSectionTitle.textContent = clipType;
+
+    typeSectionDiv.appendChild(typeSectionTitle);
+
+    clipsByType[clipType].forEach((clipIndex) => {
+      const clip = clipFiles[clipIndex];
+
+      // create and append Clip details as DIV
+      const clipDiv = document.createElement("div");
+      clipDiv.className = "clip-container";
+      clipDiv.setAttribute("data-clip-index", clipIndex);
+      clipDiv.onclick = handleClipSelected;
+
+      const clipThumbnail = document.createElement("img");
+      clipThumbnail.src = clip.getThumbnailUrl();
+
+      clipDiv.appendChild(clipThumbnail);
+
+      const clipDetailsContainer = document.createElement("div");
+      clipDetailsContainer.className = "clip-details-container";
+
+      const clipTimestampLabel = document.createElement("span");
+      clipTimestampLabel.textContent = clip.getTimestamp();
+
+      clipDetailsContainer.appendChild(clipTimestampLabel);
+
+      const clipLocationLabel = document.createElement("span");
+      clipLocationLabel.textContent = clip.getLocation();
+
+      clipDetailsContainer.appendChild(clipLocationLabel);
+
+      clipDiv.appendChild(clipDetailsContainer);
+
+      typeSectionDiv.appendChild(clipDiv);
+    });
+
+    clipsList.appendChild(typeSectionDiv);
+  });
+}
+
 function loadClip(clipIndex) {
   if (clipIndex < 0 || clipIndex >= clipFiles.length) {
     throw new Error("Invalid clip index selected");
@@ -212,9 +291,13 @@ function loadClip(clipIndex) {
   currentClipIndex = clipIndex;
 
   const isLoaded = loadClipVideos();
-  videos.forEach((video) => {
-    video.classList.toggle("hidden", !isLoaded);
-  });
+  if (isLoaded) {
+    videos.forEach((video) => {
+      video.classList.remove("hidden");
+    });
+
+    controlsSection.classList.remove("hidden");
+  }
 }
 
 function loadPreviousClip() {
@@ -229,6 +312,8 @@ function loadNextClip() {
 
 function loadClipVideos() {
   const currentClip = clipFiles[currentClipIndex];
+
+  clipTitleLabel.textContent = currentClip.getTitle();
 
   const currentClipVideos = currentClip.getNextVideos();
   if (!currentClipVideos) {
@@ -299,46 +384,15 @@ fileBrowserInput.addEventListener("change", async function (e) {
 
   console.debug(">>> tcClips", tcClips);
 
-  // group Clips by type to ease rendering
-  const clipsByType = tcClips.reduce((byType, clip, clipIndex) => {
-    return {
-      ...byType,
-      [clip.type]: [...(byType[clip.type] || []), clipIndex],
-    };
-  }, {});
-
-  console.debug(">>> tcClipsByType", clipsByType);
-
-  availableClipsSelect.innerHTML = null;
-
-  Object.keys(clipsByType).forEach((clipType) => {
-    const selectOptionsGroup = document.createElement("optgroup");
-    selectOptionsGroup.label = clipType;
-
-    clipsByType[clipType].forEach((clipIndex) => {
-      const clip = tcClips[clipIndex];
-
-      const selectOption = document.createElement("option");
-      selectOption.label = clip.getName();
-      selectOption.value = clipIndex;
-
-      selectOptionsGroup.appendChild(selectOption);
-    });
-
-    availableClipsSelect.appendChild(selectOptionsGroup);
-  });
-
   clipFiles = tcClips;
 
   loadClip(0);
+
+  renderClipsList();
 });
 
-availableClipsSelect.addEventListener("change", (evt) => {
-  console.log(">>> availableClipsSelect - onChange", evt);
-
-  const selectClipIndex = parseInt(availableClipsSelect.options[evt.currentTarget.selectedIndex].value);
-
-  loadClip(selectClipIndex);
+sidebarToggleBtns.forEach((sidebarToggleBtn) => {
+  sidebarToggleBtn.addEventListener("click", sidebarToggle);
 });
 
 playPauseBtn.addEventListener("click", playPause);
@@ -420,3 +474,14 @@ frontVideo.addEventListener("ended", function (evt) {
     playbackIsPaused = true;
   }
 });
+
+function handleClipSelected(evt) {
+  console.debug(">>> handleClipSelected - evt", evt);
+
+  const selectedClipIndex = parseInt(evt.currentTarget.getAttribute("data-clip-index"), 10);
+  console.debug(">>> selectedClipIndex", selectedClipIndex);
+
+  loadClip(selectedClipIndex);
+
+  sidebarClose();
+}
