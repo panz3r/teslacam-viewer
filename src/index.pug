@@ -15,7 +15,7 @@ html(lang="en")
     header
       .header-container
         span.icon-container.btn-sidebar-toggle
-          include assets/list.svg
+          include:svgo assets/list.svg
 
         h3#title &nbsp;
 
@@ -31,7 +31,7 @@ html(lang="en")
     section#sidebar.closed
       #sidebar-header
         span.icon-container.btn-sidebar-toggle
-          include assets/list.svg
+          include:svgo assets/list.svg
 
         h3 Clips
 
@@ -40,40 +40,40 @@ html(lang="en")
     section#global-controls.hidden
       .controls
         button.previous
-          include assets/skip_previous.svg
+          include:svgo assets/skip_previous.svg
 
         button.skip(onclick="skipTo(-10)")
-          include assets/replay_10.svg
+          include:svgo assets/replay_10.svg
 
         button.skip(onclick="skipTo(-5)")
-          include assets/replay_5.svg
+          include:svgo assets/replay_5.svg
 
         button.btn-play-pause
-          include assets/play_arrow.svg
+          include:svgo assets/play_arrow.svg
 
-          include assets/pause.svg
+          include:svgo assets/pause.svg
 
         button.skip(onclick="skipTo(5)")
-          include assets/forward_5.svg
+          include:svgo assets/forward_5.svg
 
         button.skip(onclick="skipTo(10)")
-          include assets/forward_10.svg
+          include:svgo assets/forward_10.svg
 
         button.next
-          include assets/skip_next.svg
+          include:svgo assets/skip_next.svg
 
         button.btn-autoplay
-          include assets/autoplay.svg
+          include:svgo assets/autoplay.svg
 
       .speed
         button.btn-playback-rate(data-rate="0.5")
-          include assets/speed_0_5x.svg
+          include:svgo assets/speed_0_5x.svg
 
         button.btn-playback-rate.active(data-rate="1")
-          include assets/speed_1x.svg
+          include:svgo assets/speed_1x.svg
 
         button.btn-playback-rate(data-rate="2")
-          include assets/speed_2x.svg
+          include:svgo assets/speed_2x.svg
 
     section#video-players
       .title
