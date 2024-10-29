@@ -23,6 +23,7 @@
     "gulp": "^5.0.0",
     "gulp-pug": "^5.0.0",
     "jstransformer-clean-css": "^2.1.0",
+    "jstransformer-svgo": "^1.2.0",
     "jstransformer-terser": "^0.2.2",
     "rimraf": "^6.0.1",
     "terser": "^5.36.0",
