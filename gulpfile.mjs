@@ -33,6 +33,6 @@ async function watchFiles() {
 }
 
 // npm run watch / npx gulp watch: continuously update index.html from deps
-export const watch = watchFiles;
+export const watch = gulp.series(buildHtml, watchFiles);
 
 export default build;
