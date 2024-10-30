@@ -75,47 +75,14 @@ html(lang="en")
         button.btn-playback-rate(data-rate="2")
           include:svgo assets/speed_2x.svg
 
-    section#video-players
-      .title
-        span No Videos Loaded
+    section#video-players.hidden
+      video.front.fullscreen(src="")
 
-      div
-        video.front.fullscreen.hidden(src="")
+      video.left_repeater(src="")
 
-        video.left_repeater.hidden(src="")
+      video.right_repeater(src="")
 
-        video.right_repeater.hidden(src="")
-
-        video.back.hidden(src="")
-
-    section#readme
-      h2 README
-      hr
-      h3 Directory Placement
-      p 
-      | This 
-      code index.html
-      |  file 
-      strong must
-      |  be at the same level as the 
-      code TeslaCam
-      |  folder which can be placed directly on the root of the USB drive.
-
-      h3 Example:
-
-      code
-        | Root Folder
-        br
-        | &nbsp;|- index.html
-        br
-        | &nbsp;|- TeslaCam(USB Drive Top Level Folder)
-        br
-        | &nbsp;&nbsp;&nbsp;|- Saved Clips
-        br
-        | &nbsp;&nbsp;&nbsp;|- Sentry Videos
-        br
-        | &nbsp;&nbsp;&nbsp;|- ...
-        br
+      video.back(src="")
 
     script
       include:terser js/index.js

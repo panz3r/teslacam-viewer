@@ -11,11 +11,12 @@ const clipsList = document.querySelector("#clips-list");
 
 const clipTitleLabel = document.querySelector("#title");
 
-const videos = document.querySelectorAll("video");
-const backVideo = document.querySelector("video.back");
-const frontVideo = document.querySelector("video.front");
-const leftVideo = document.querySelector("video.left_repeater");
-const rightVideo = document.querySelector("video.right_repeater");
+const videosSection = document.querySelector("#video-players");
+const videos = document.querySelectorAll("#video-players video");
+const backVideo = document.querySelector("#video-players .back");
+const frontVideo = document.querySelector("#video-players .front");
+const leftVideo = document.querySelector("#video-players .left_repeater");
+const rightVideo = document.querySelector("#video-players .right_repeater");
 
 const controlsSection = document.querySelector("#global-controls");
 const playPauseBtn = document.querySelector(".btn-play-pause");
@@ -46,6 +47,14 @@ function sidebarToggle() {
 
 function sidebarClose() {
   sidebar.classList.add("closed");
+}
+
+function videosShow() {
+  videosSection.classList.remove("hidden");
+}
+
+function controlsShow() {
+  controlsSection.classList.remove("hidden");
 }
 
 function playVideos() {
@@ -181,11 +190,8 @@ function loadClip(clipIndex) {
 
   const isLoaded = loadClipVideos();
   if (isLoaded) {
-    videos.forEach((video) => {
-      video.classList.remove("hidden");
-    });
-
-    controlsSection.classList.remove("hidden");
+    videosShow();
+    controlsShow();
   }
 }
 

@@ -77,53 +77,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-video {
-  width: 200px;
-
-  position: absolute;
-  z-index: 10;
-
-  transition: all 0.15s linear;
-}
-
-video.front {
-  top: 0;
-  left: 50%;
-
-  margin-left: -100px;
-}
-
-video.left_repeater {
-  top: 25%;
-  left: 0;
-}
-
-video.right_repeater {
-  top: 25%;
-  right: 0;
-}
-
-video.back {
-  bottom: 0;
-  left: 50%;
-
-  margin-left: -100px;
-}
-
-video.fullscreen {
-  width: 100vw;
-  height: 100vh;
-
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 5;
-
-  margin: 0;
-}
-
 code {
   background: lightgrey;
 }
@@ -257,6 +210,53 @@ section#sidebar #clips-list {
 
 #clips-list .clip-container .clip-details-container span:last-child {
   color: rgba(255, 255, 255, 0.67);
+}
+
+#video-players video {
+  width: 200px;
+
+  position: absolute;
+  z-index: 10;
+
+  transition: all 0.15s linear;
+}
+
+#video-players .front {
+  top: 0;
+  left: 50%;
+
+  margin-left: -100px;
+}
+
+#video-players .left_repeater {
+  top: 25%;
+  left: 0;
+}
+
+#video-players .right_repeater {
+  top: 25%;
+  right: 0;
+}
+
+#video-players .back {
+  bottom: 0;
+  left: 50%;
+
+  margin-left: -100px;
+}
+
+#video-players .fullscreen {
+  width: 100vw;
+  height: 100vh;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 5;
+
+  margin: 0;
 }
 
 #global-controls div {
