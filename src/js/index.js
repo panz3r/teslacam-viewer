@@ -1,10 +1,10 @@
 import { TeslaCamClip } from "./teslacam";
 
-const setupScreenSection = document.querySelector("#setup-screen");
+const screenSetup = document.querySelector("#setup-screen");
+const screenPlayer = document.querySelector("#player-screen");
+
 const startBtn = document.querySelector(".btn-start");
 const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
-
-const header = document.querySelector("header");
 
 const sidebarToggleBtns = document.querySelectorAll(".btn-sidebar-toggle");
 
@@ -12,16 +12,8 @@ const sidebar = document.querySelector("#sidebar");
 const sidebarOverlay = document.querySelector("#sidebar-overlay");
 const clipsList = document.querySelector("#clips-list");
 
-const clipTitleLabel = document.querySelector("#title");
+const clipTitleLabel = document.querySelector("#clip-title");
 
-const videosSection = document.querySelector("#video-players");
-const videos = document.querySelectorAll("#video-players video");
-const backVideo = document.querySelector("#video-players .back");
-const frontVideo = document.querySelector("#video-players .front");
-const leftVideo = document.querySelector("#video-players .left_repeater");
-const rightVideo = document.querySelector("#video-players .right_repeater");
-
-const controlsSection = document.querySelector("#global-controls");
 const playPauseBtn = document.querySelector(".btn-play-pause");
 const next = document.querySelector("button.next");
 const previous = document.querySelector("button.previous");
@@ -29,6 +21,12 @@ const skipBtns = document.querySelectorAll(".btn-skip");
 const autoPlayBtn = document.querySelector(".btn-autoplay");
 
 const playbackRateBtns = document.querySelectorAll(".btn-playback-rate");
+
+const videoPlayers = document.querySelectorAll("#video-players video");
+const frontVideoPlayer = document.querySelector("#video-players .video-front");
+const backVideoPlayer = document.querySelector("#video-players .video-back");
+const leftVideoPlayer = document.querySelector("#video-players .video-left");
+const rightVideoPlayer = document.querySelector("#video-players .video-right");
 
 let clipFiles = [];
 let currentClipIndex = -1;
@@ -40,12 +38,22 @@ let playbackIsPaused = true;
 //  DOM UTILS
 //
 
-function setupScreenHide() {
-  setupScreenSection.classList.add("hidden");
-}
+function pageNavigateTo(destinationPage) {
+  switch (destinationPage) {
+    case "SETUP":
+      screenSetup.classList.remove("hidden");
+      screenPlayer.classList.add("hidden");
+      break;
 
-function headerShow() {
-  header.classList.remove("hidden");
+    case "PLAYER":
+      screenSetup.classList.add("hidden");
+      screenPlayer.classList.remove("hidden");
+      break;
+
+    default:
+      screenSetup.classList.add("hidden");
+      screenPlayer.classList.add("hidden");
+  }
 }
 
 function sidebarToggle() {
@@ -56,18 +64,32 @@ function sidebarClose() {
   sidebar.classList.remove("open");
 }
 
-function videosShow() {
-  videosSection.classList.remove("hidden");
-}
+//
+//  VideoPlayers Utils
+//
 
-function controlsShow() {
-  controlsSection.classList.remove("hidden");
+function handleVideoPlayerClick(evt) {
+  console.debug(">>> video - onClick", evt);
+
+  const currentVideoPlayer = evt.currentTarget;
+  if (currentVideoPlayer.classList.contains("active")) {
+    // video already zoomed - nothing else to do
+    return;
+  }
+
+  // de-zoom all video elements
+  videoPlayers.forEach((videoPlayer) => {
+    videoPlayer.classList.remove("active");
+  });
+
+  // zoom selected video element
+  currentVideoPlayer.classList.add("active");
 }
 
 function playVideos() {
-  videos.forEach((video) => {
-    video.play();
-    video.playbackRate = playbackRate;
+  videoPlayers.forEach((videoPlayer) => {
+    videoPlayer.play();
+    videoPlayer.playbackRate = playbackRate;
   });
 }
 
@@ -81,8 +103,8 @@ function setPlaybackRate(evt) {
   playbackRateBtns.forEach((playbackRateBtn) => playbackRateBtn.classList.remove("active"));
   selectedPlaybackRateBtn.classList.add("active");
 
-  videos.forEach((video) => {
-    video.playbackRate = playbackRate;
+  videoPlayers.forEach((videoPlayer) => {
+    videoPlayer.playbackRate = playbackRate;
   });
 }
 
@@ -91,14 +113,14 @@ function skipTo(evt) {
 
   const skipSeconds = parseInt(evt.currentTarget.getAttribute("data-skip"), 10);
 
-  videos.forEach((video) => {
-    video.currentTime += skipSeconds;
+  videoPlayers.forEach((videoPlayer) => {
+    videoPlayer.currentTime += skipSeconds;
   });
 }
 
 function pauseVideos() {
-  videos.forEach((video) => {
-    video.pause();
+  videoPlayers.forEach((videoPlayer) => {
+    videoPlayer.pause();
   });
 }
 
@@ -195,11 +217,7 @@ function loadClip(clipIndex) {
   console.debug(">>> loadClip:", clipFiles[clipIndex]);
   currentClipIndex = clipIndex;
 
-  const isLoaded = loadClipVideos();
-  if (isLoaded) {
-    videosShow();
-    controlsShow();
-  }
+  loadClipVideos();
 }
 
 function loadPreviousClip() {
@@ -222,10 +240,10 @@ function loadClipVideos() {
     return false;
   }
 
-  frontVideo.src = currentClipVideos.front;
-  leftVideo.src = currentClipVideos.left;
-  rightVideo.src = currentClipVideos.right;
-  backVideo.src = currentClipVideos.back;
+  frontVideoPlayer.src = currentClipVideos.front;
+  leftVideoPlayer.src = currentClipVideos.left;
+  rightVideoPlayer.src = currentClipVideos.right;
+  backVideoPlayer.src = currentClipVideos.back;
 
   return true;
 }
@@ -292,11 +310,9 @@ fileBrowserInput.addEventListener("change", async function () {
 
   loadClip(0);
 
-  headerShow();
-
   renderClipsList();
 
-  setupScreenHide();
+  pageNavigateTo("PLAYER");
 });
 
 sidebarToggleBtns.forEach((sidebarToggleBtn) => {
@@ -321,55 +337,11 @@ playbackRateBtns.forEach((playbackRateBtn) => {
   playbackRateBtn.addEventListener("click", setPlaybackRate);
 });
 
-//Add listeners for play, pause and click buttons for each video.
-videos.forEach((video) => {
-  video.addEventListener("play", function (e) {
-    console.debug(">>> video - onPlay", e);
-
-    playVideos();
-  });
-
-  video.addEventListener("pause", function (evt) {
-    console.debug(">>> video - onPause", evt);
-
-    if (!evt.currentTarget.ended) {
-      pauseVideos();
-    }
-  });
-
-  video.addEventListener("click", function (e) {
-    console.debug(">>> video - onClick", e);
-
-    const currentVideo = e.target;
-
-    const currentTime = currentVideo.currentTime;
-
-    if (currentVideo != frontVideo) {
-      frontVideo.currentTime = currentTime;
-    }
-    if (currentVideo != leftVideo) {
-      leftVideo.currentTime = currentTime;
-    }
-    if (currentVideo != rightVideo) {
-      rightVideo.currentTime = currentTime;
-    }
-    if (currentVideo != backVideo) {
-      backVideo.currentTime = currentTime;
-    }
-
-    const enlargeCurrentVideo = !currentVideo.classList.contains("fullscreen");
-
-    videos.forEach((video) => {
-      video.classList.remove("fullscreen");
-    });
-
-    if (enlargeCurrentVideo) {
-      currentVideo.classList.add("fullscreen");
-    }
-  });
+videoPlayers.forEach((videoPlayer) => {
+  videoPlayer.addEventListener("click", handleVideoPlayerClick);
 });
 
-frontVideo.addEventListener("canplaythrough", function (evt) {
+frontVideoPlayer.addEventListener("canplaythrough", function (evt) {
   console.debug(">>> frontVideo - onCanPlayThrough", evt, playbackIsPaused);
 
   if (!playbackIsPaused) {
@@ -377,7 +349,7 @@ frontVideo.addEventListener("canplaythrough", function (evt) {
   }
 });
 
-frontVideo.addEventListener("ended", function (evt) {
+frontVideoPlayer.addEventListener("ended", function (evt) {
   console.debug(">>> frontVideo - onEnded", evt);
 
   const hasNext = loadClipVideos();

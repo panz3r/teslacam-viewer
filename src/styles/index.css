@@ -112,21 +112,28 @@ code {
   cursor: pointer;
 }
 
-#setup-screen {
+/** Common Screens */
+
+.screen-content {
   width: 100vw;
   height: 100vh;
-}
 
-#setup-screen #setup-screen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  height: 99vh;
 }
 
-#setup-screen #setup-screen-container .btn-start {
+#setup-screen-container {
+  justify-content: center;
+  align-items: center;
+}
+
+#setup-screen-container .btn-start {
   height: 48px;
 
   padding: 8px 12px;
@@ -135,20 +142,17 @@ code {
   font-weight: 600;
 }
 
-header {
-  width: 100vw;
-}
 
-header .header-container {
+#video-players-header {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
 
-  padding: 12px 8px;
+  padding: 4px 8px;
 }
 
-header .header-container #title {
+#video-players-header #clip-title {
   flex-grow: 1;
 
   margin-block-start: 0;
@@ -195,7 +199,7 @@ header .header-container #title {
   align-items: center;
   gap: 8px;
 
-  padding: 12px 0;
+  padding: 4px 0;
 }
 
 #sidebar-header h3 {
@@ -252,6 +256,14 @@ header .header-container #title {
   margin-left: 0;
 }
 
+#video-players {
+  position: relative;
+
+  flex-grow: 1;
+
+  background-color: rgba(0, 0, 0, 1);
+}
+
 #video-players video {
   width: 200px;
 
@@ -261,33 +273,33 @@ header .header-container #title {
   transition: all 0.15s linear;
 }
 
-#video-players .front {
+#video-players .video-front {
   top: 0;
   left: 50%;
 
   margin-left: -100px;
 }
 
-#video-players .left_repeater {
+#video-players .video-left {
   top: 25%;
   left: 0;
 }
 
-#video-players .right_repeater {
+#video-players .video-right {
   top: 25%;
   right: 0;
 }
 
-#video-players .back {
+#video-players .video-back {
   bottom: 0;
   left: 50%;
 
   margin-left: -100px;
 }
 
-#video-players .fullscreen {
-  width: 100vw;
-  height: 100vh;
+#video-players video.active {
+  width: 100%;
+  height: 100%;
 
   top: 0;
   left: 0;
@@ -299,22 +311,12 @@ header .header-container #title {
   margin: 0;
 }
 
-#global-controls div {
-  position: absolute;
-  z-index: 7;
+#global-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 
-  border-radius: 8px;
   padding: 8px;
-
-  background-color: #838383;
-}
-
-#global-controls div.controls {
-  left: 4px;
-  bottom: 4px;
-}
-
-#global-controls div.speed {
-  right: 4px;
-  bottom: 4px;
 }

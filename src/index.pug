@@ -12,80 +12,80 @@ html(lang="en")
       include:clean-css styles/index.css
 
   body
-    header.hidden
-      .header-container
-        span.icon-container.btn-sidebar-toggle
-          include:svgo assets/list.svg
-
-        h3#title &nbsp;
-
     section#setup-screen
-      #setup-screen-container
+      #setup-screen-container.screen-content
         h1 #{name}
 
         button.btn-start select "TeslaCam" directory
 
         input#fileBrowser.hidden(type="file" accept="video/mp4" webkitdirectory multiple)
 
-    section#global-controls.hidden
-      .controls
-        button.previous
-          include:svgo assets/skip_previous.svg
-
-        button.btn-skip(data-skip="-10")
-          include:svgo assets/replay_10.svg
-
-        button.btn-skip(data-skip="-5")
-          include:svgo assets/replay_5.svg
-
-        button.btn-play-pause
-          include:svgo assets/play_arrow.svg
-
-          include:svgo assets/pause.svg
-
-        button.btn-skip(data-skip="5")
-          include:svgo assets/forward_5.svg
-
-        button.btn-skip(data-skip="10")
-          include:svgo assets/forward_10.svg
-
-        button.next
-          include:svgo assets/skip_next.svg
-
-        button.btn-autoplay
-          include:svgo assets/autoplay.svg
-
-      .speed
-        button.btn-playback-rate(data-rate="0.5")
-          include:svgo assets/speed_0_5x.svg
-
-        button.btn-playback-rate.active(data-rate="1")
-          include:svgo assets/speed_1x.svg
-
-        button.btn-playback-rate(data-rate="2")
-          include:svgo assets/speed_2x.svg
-
-    section#video-players.hidden
-      video.front.fullscreen(src="")
-
-      video.left_repeater(src="")
-
-      video.right_repeater(src="")
-
-      video.back(src="")
-
-    section#sidebar
-      #sidebar-overlay
-
-      #sidebar-container
-        #sidebar-header
+    section#player-screen.hidden
+      #player-screen-container.screen-content
+        #video-players-header
           span.icon-container.btn-sidebar-toggle
             include:svgo assets/list.svg
 
-          h3 Clips
+          h3#clip-title &nbsp;
 
-        #clips-list
+        #video-players
+          video.video-front.active
 
+          video.video-left
+
+          video.video-right
+
+          video.video-back
+
+        #global-controls
+          .controls
+            button.previous
+              include:svgo assets/skip_previous.svg
+
+            button.btn-skip(data-skip="-10")
+              include:svgo assets/replay_10.svg
+
+            button.btn-skip(data-skip="-5")
+              include:svgo assets/replay_5.svg
+
+            button.btn-play-pause
+              include:svgo assets/play_arrow.svg
+
+              include:svgo assets/pause.svg
+
+            button.btn-skip(data-skip="5")
+              include:svgo assets/forward_5.svg
+
+            button.btn-skip(data-skip="10")
+              include:svgo assets/forward_10.svg
+
+            button.next
+              include:svgo assets/skip_next.svg
+
+            button.btn-autoplay
+              include:svgo assets/autoplay.svg
+
+          .speed
+            button.btn-playback-rate(data-rate="0.5")
+              include:svgo assets/speed_0_5x.svg
+
+            button.btn-playback-rate.active(data-rate="1")
+              include:svgo assets/speed_1x.svg
+
+            button.btn-playback-rate(data-rate="2")
+              include:svgo assets/speed_2x.svg
+
+      #sidebar
+        #sidebar-overlay
+
+        #sidebar-container
+          #sidebar-header
+            span.icon-container.btn-sidebar-toggle
+              include:svgo assets/list.svg
+
+            h3 Clips
+
+          #clips-list
 
     script
       include:terser js/index.js
