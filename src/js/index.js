@@ -2,6 +2,8 @@ import { TeslaCamClip } from "./teslacam";
 
 const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
 
+const header = document.querySelector("header");
+
 const sidebarToggleBtns = document.querySelectorAll(".btn-sidebar-toggle");
 
 const sidebar = document.querySelector("#sidebar");
@@ -33,6 +35,10 @@ let playbackIsPaused = true;
 //
 //  DOM UTILS
 //
+
+function headerShow() {
+  header.classList.remove("hidden");
+}
 
 function sidebarToggle() {
   sidebar.classList.toggle("closed");
@@ -268,6 +274,8 @@ fileBrowserInput.addEventListener("change", async function () {
   clipFiles = tcClips;
 
   loadClip(0);
+
+  headerShow();
 
   renderClipsList();
 });
