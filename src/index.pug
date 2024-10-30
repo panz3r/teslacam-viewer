@@ -19,14 +19,13 @@ html(lang="en")
 
         h3#title &nbsp;
 
-    section#main-overlay
-      h1 #{name}
+    section#setup-screen
+      #setup-screen-container
+        h1 #{name}
 
-      div
-        strong Select TeslaCam Directory
-        | &nbsp;(Must be in same directory as index.html):
-        br
-        input#fileBrowser(type="file" accept="video/mp4" webkitdirectory multiple)
+        button.btn-start select "TeslaCam" directory
+
+        input#fileBrowser.hidden(type="file" accept="video/mp4" webkitdirectory multiple)
 
     section#sidebar
       #sidebar-header

@@ -1,5 +1,7 @@
 import { TeslaCamClip } from "./teslacam";
 
+const setupScreenSection = document.querySelector("#setup-screen");
+const startBtn = document.querySelector(".btn-start");
 const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser]");
 
 const header = document.querySelector("header");
@@ -36,6 +38,10 @@ let playbackIsPaused = true;
 //
 //  DOM UTILS
 //
+
+function setupScreenHide() {
+  setupScreenSection.classList.add("hidden");
+}
 
 function headerShow() {
   header.classList.remove("hidden");
@@ -227,6 +233,10 @@ function loadClipVideos() {
 //  EVENT LISTENERS
 //
 
+startBtn.addEventListener("click", function () {
+  fileBrowserInput.click();
+});
+
 //The following code uses webkitdirectory to get all the videos from a directory
 fileBrowserInput.addEventListener("change", async function () {
   // Group files by Folder and SubFolder
@@ -284,6 +294,8 @@ fileBrowserInput.addEventListener("change", async function () {
   headerShow();
 
   renderClipsList();
+
+  setupScreenHide();
 });
 
 sidebarToggleBtns.forEach((sidebarToggleBtn) => {
