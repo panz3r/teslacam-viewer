@@ -155,7 +155,20 @@ header .header-container #title {
   margin-block-end: 0;
 }
 
-#sidebar {
+#sidebar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 49;
+
+  display: none;
+
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+#sidebar-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -176,11 +189,7 @@ header .header-container #title {
   transition: all 0.15s linear;
 }
 
-#sidebar.open {
-  margin-left: 0;
-}
-
-#sidebar #sidebar-header {
+#sidebar-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -189,12 +198,12 @@ header .header-container #title {
   padding: 12px 0;
 }
 
-#sidebar #sidebar-header h3 {
+#sidebar-header h3 {
   margin-block-start: 0;
   margin-block-end: 0;
 }
 
-#sidebar #clips-list {
+#clips-list {
   flex-grow: 1;
 
   padding-right: 8px;
@@ -233,6 +242,14 @@ header .header-container #title {
 
 #clips-list .clip-container .clip-details-container span:last-child {
   color: rgba(255, 255, 255, 0.67);
+}
+
+#sidebar.open #sidebar-overlay {
+  display: block;
+}
+
+#sidebar.open #sidebar-container {
+  margin-left: 0;
 }
 
 #video-players video {

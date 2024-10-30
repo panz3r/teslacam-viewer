@@ -9,6 +9,7 @@ const header = document.querySelector("header");
 const sidebarToggleBtns = document.querySelectorAll(".btn-sidebar-toggle");
 
 const sidebar = document.querySelector("#sidebar");
+const sidebarOverlay = document.querySelector("#sidebar-overlay");
 const clipsList = document.querySelector("#clips-list");
 
 const clipTitleLabel = document.querySelector("#title");
@@ -301,6 +302,8 @@ fileBrowserInput.addEventListener("change", async function () {
 sidebarToggleBtns.forEach((sidebarToggleBtn) => {
   sidebarToggleBtn.addEventListener("click", sidebarToggle);
 });
+
+sidebarOverlay.addEventListener("click", sidebarClose);
 
 playPauseBtn.addEventListener("click", playPause);
 

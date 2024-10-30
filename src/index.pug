@@ -27,15 +27,6 @@ html(lang="en")
 
         input#fileBrowser.hidden(type="file" accept="video/mp4" webkitdirectory multiple)
 
-    section#sidebar
-      #sidebar-header
-        span.icon-container.btn-sidebar-toggle
-          include:svgo assets/list.svg
-
-        h3 Clips
-
-      #clips-list
-
     section#global-controls.hidden
       .controls
         button.previous
@@ -82,6 +73,19 @@ html(lang="en")
       video.right_repeater(src="")
 
       video.back(src="")
+
+    section#sidebar
+      #sidebar-overlay
+
+      #sidebar-container
+        #sidebar-header
+          span.icon-container.btn-sidebar-toggle
+            include:svgo assets/list.svg
+
+          h3 Clips
+
+        #clips-list
+
 
     script
       include:terser js/index.js
