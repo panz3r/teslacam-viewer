@@ -42,11 +42,11 @@ function headerShow() {
 }
 
 function sidebarToggle() {
-  sidebar.classList.toggle("closed");
+  sidebar.classList.toggle("open");
 }
 
 function sidebarClose() {
-  sidebar.classList.add("closed");
+  sidebar.classList.remove("open");
 }
 
 function videosShow() {

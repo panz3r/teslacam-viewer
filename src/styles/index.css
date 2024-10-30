@@ -132,7 +132,7 @@ header .header-container #title {
   margin-block-end: 0;
 }
 
-section#sidebar {
+#sidebar {
   position: absolute;
   top: 0;
   left: 0;
@@ -143,7 +143,7 @@ section#sidebar {
   max-height: 100vh;
 
   padding-left: 8px;
-  margin-left: 0;
+  margin-left: -42vw;
 
   background-color: #242424;
 
@@ -153,11 +153,11 @@ section#sidebar {
   transition: all 0.15s linear;
 }
 
-section#sidebar.closed {
-  margin-left: -42vw;
+#sidebar.open {
+  margin-left: 0;
 }
 
-section#sidebar #sidebar-header {
+#sidebar #sidebar-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -166,12 +166,12 @@ section#sidebar #sidebar-header {
   padding: 12px 0;
 }
 
-section#sidebar #sidebar-header h3 {
+#sidebar #sidebar-header h3 {
   margin-block-start: 0;
   margin-block-end: 0;
 }
 
-section#sidebar #clips-list {
+#sidebar #clips-list {
   flex-grow: 1;
 
   padding-right: 8px;
