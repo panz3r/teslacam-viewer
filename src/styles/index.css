@@ -264,11 +264,21 @@ code {
   background-color: rgba(0, 0, 0, 1);
 }
 
-#video-players video {
+#video-players video,
+.video-background,
+.video-label {
   width: 200px;
+  height: 130px;
 
   position: absolute;
+
+  border-radius: 8px;
+}
+
+#video-players video {
   z-index: 10;
+
+  cursor: pointer;
 
   transition: all 0.15s linear;
 }
@@ -309,7 +319,52 @@ code {
   z-index: 5;
 
   margin: 0;
+
+  cursor: default;
 }
+
+.video-background {
+  z-index: 8;
+
+  background-color: rgba(40, 40, 40, 0.45);
+}
+
+.video-label {
+  z-index: 12;
+
+  display: flex;
+
+  font-weight: 600;
+  text-transform: uppercase;
+
+  /** Allow event passthrough to video elements */
+  pointer-events: none;
+}
+
+.video-label span {
+  padding: 0 8px;
+}
+
+.video-label.video-front {
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+.video-label.video-left {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.video-label.video-right {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.video-label.video-back {
+  align-items: flex-end;
+  justify-content: space-around;
+}
+
 
 #global-controls {
   display: flex;
