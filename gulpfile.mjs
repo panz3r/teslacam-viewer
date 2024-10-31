@@ -1,8 +1,10 @@
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 
+import rollupStrip from "@rollup/plugin-strip";
 import rollup from "@rollup/stream";
 import gulp from "gulp";
+import gulpEnv from "gulp-environments";
 import gulpPug from "gulp-pug";
 import { rimraf } from "rimraf";
 import source from "vinyl-source-stream";
@@ -29,7 +31,11 @@ function buildCss() {
 }
 
 function buildJs() {
-  return rollup({ input: "./src/js/index.js", output: { format: "iife" } })
+  return rollup({
+    input: "./src/js/index.js",
+    output: { format: "iife" },
+    plugins: gulpEnv.production() ? [rollupStrip()] : [],
+  })
     .pipe(source("js/index.js"))
     .pipe(buffer())
     .pipe(gulp.dest(BUILD_DIRECTORY));
