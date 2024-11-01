@@ -22,7 +22,7 @@ html(lang="en")
 
     section#player-screen.hidden
       #player-screen-container.screen-content
-        #video-players-header
+        .header
           span.icon-button.btn-sidebar-toggle
             include:svgo assets/list.svg
 
@@ -98,7 +98,7 @@ html(lang="en")
         .overlay
 
         #sidebar-container
-          #sidebar-header
+          .header
             span.icon-button.btn-sidebar-toggle
               include:svgo assets/list.svg
 
@@ -110,11 +110,11 @@ html(lang="en")
         .overlay
 
         #info-popup-container
-          #info-popup-header
+          .header
             span.icon
               include:svgo assets/info.svg
 
-            h3.name #{name}
+            h3 #{name}
 
             span.icon-button.btn-info-popup-close
               include:svgo assets/close.svg
