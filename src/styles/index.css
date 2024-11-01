@@ -365,6 +365,32 @@ code {
   padding: 8px;
 }
 
+.btn-info-popup-open {
+  position: relative;
+}
+
+.btn-info-popup-open .badge {
+  display: none;
+
+  position: absolute;
+  /* .icon padding - ( badge_size / 2) */
+  top: 6px;
+  /* .icon padding - ( badge_size / 2) */
+  right: 6px;
+
+  /*badge_size */
+  padding: 6px;
+  border-radius: 50%;
+
+  background: rgba(50, 50, 250, 1);
+
+  animation: badge-pulse 2s infinite;
+}
+
+.btn-info-popup-open.badge-visible .badge {
+  display: block;
+}
+
 #info-popup-container {
   width: 480px;
 
@@ -408,4 +434,16 @@ code {
 #info-popup-content .version {
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.9em;
+}
+
+/** ANIMATIONS */
+
+@keyframes badge-pulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(50, 50, 250, 0.65);
+  }
+
+  100% {
+    box-shadow: 0 0 0 20px rgba(50, 50, 250, 0);
+  }
 }
