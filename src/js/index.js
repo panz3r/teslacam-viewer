@@ -9,10 +9,14 @@ const fileBrowserInput = document.querySelector("input[type=file][id=fileBrowser
 const sidebarToggleBtns = document.querySelectorAll(".btn-sidebar-toggle");
 
 const sidebar = document.querySelector("#sidebar");
-const sidebarOverlay = document.querySelector("#sidebar-overlay");
+const sidebarOverlay = document.querySelector("#sidebar .overlay");
 const clipsList = document.querySelector("#clips-list");
 
 const clipTitleLabel = document.querySelector("#clip-title");
+
+const infoPopup = document.querySelector("#info-popup");
+const infoPopupOpenBtn = document.querySelector(".btn-info-popup-open");
+const infoPopupCloseBtn = document.querySelector(".btn-info-popup-close");
 
 const playPauseBtn = document.querySelector(".btn-play-pause");
 const next = document.querySelector("button.next");
@@ -62,6 +66,14 @@ function sidebarToggle() {
 
 function sidebarClose() {
   sidebar.classList.remove("open");
+}
+
+function infoPopupOpen() {
+  infoPopup.classList.add("open");
+}
+
+function infoPopupClose() {
+  infoPopup.classList.remove("open");
 }
 
 //
@@ -320,6 +332,10 @@ sidebarToggleBtns.forEach((sidebarToggleBtn) => {
 });
 
 sidebarOverlay.addEventListener("click", sidebarClose);
+
+infoPopupOpenBtn.addEventListener("click", infoPopupOpen);
+
+infoPopupCloseBtn.addEventListener("click", infoPopupClose);
 
 playPauseBtn.addEventListener("click", playPause);
 

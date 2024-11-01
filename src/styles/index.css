@@ -100,7 +100,8 @@ code {
   display: none;
 }
 
-.icon-container {
+.icon,
+.icon-button {
   display: inline-block;
   width: 24px;
   height: 24px;
@@ -108,7 +109,9 @@ code {
   line-height: 1;
 
   padding: 8px;
+}
 
+.icon-button {
   cursor: pointer;
 }
 
@@ -159,7 +162,7 @@ code {
   margin-block-end: 0;
 }
 
-#sidebar-overlay {
+.overlayed .overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -170,6 +173,10 @@ code {
   display: none;
 
   background-color: rgba(0, 0, 0, 0.65);
+}
+
+.overlayed.open .overlay {
+  display: block;
 }
 
 #sidebar-container {
@@ -193,6 +200,10 @@ code {
   transition: all 0.15s linear;
 }
 
+#sidebar.open #sidebar-container {
+  margin-left: 0;
+}
+
 #sidebar-header {
   display: flex;
   flex-direction: row;
@@ -203,6 +214,8 @@ code {
 }
 
 #sidebar-header h3 {
+  flex-grow: 1;
+
   margin-block-start: 0;
   margin-block-end: 0;
 }
@@ -246,14 +259,6 @@ code {
 
 #clips-list .clip-container .clip-details-container span:last-child {
   color: rgba(255, 255, 255, 0.67);
-}
-
-#sidebar.open #sidebar-overlay {
-  display: block;
-}
-
-#sidebar.open #sidebar-container {
-  margin-left: 0;
 }
 
 #video-players {
@@ -365,7 +370,6 @@ code {
   justify-content: space-around;
 }
 
-
 #global-controls {
   display: flex;
   flex-direction: row;
@@ -374,4 +378,62 @@ code {
   gap: 8px;
 
   padding: 8px;
+}
+
+#info-popup-container {
+  width: 480px;
+
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  z-index: 50;
+
+  display: none;
+
+  margin-left: -240px;
+  border-radius: 8px;
+
+  background-color: #242424;
+}
+
+#info-popup.open #info-popup-container {
+  display: block;
+}
+
+#info-popup-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 4px 8px;
+}
+
+#info-popup-header h3 {
+  flex-grow: 1;
+
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+#info-popup-header .name {
+  text-align: center;
+}
+
+#info-popup-content {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+
+  padding: 0 8px 8px;
+
+  text-align: center;
+}
+
+#info-popup-content .version {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9em;
 }

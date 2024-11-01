@@ -23,10 +23,13 @@ html(lang="en")
     section#player-screen.hidden
       #player-screen-container.screen-content
         #video-players-header
-          span.icon-container.btn-sidebar-toggle
+          span.icon-button.btn-sidebar-toggle
             include:svgo assets/list.svg
 
           h3#clip-title &nbsp;
+
+          span.icon-button.btn-info-popup-open
+            include:svgo assets/info.svg
 
         #video-players
           video.video-front.active
@@ -91,17 +94,40 @@ html(lang="en")
             button.btn-playback-rate(data-rate="2")
               include:svgo assets/speed_2x.svg
 
-      #sidebar
-        #sidebar-overlay
+      #sidebar.overlayed
+        .overlay
 
         #sidebar-container
           #sidebar-header
-            span.icon-container.btn-sidebar-toggle
+            span.icon-button.btn-sidebar-toggle
               include:svgo assets/list.svg
 
             h3 Clips
 
           #clips-list
+
+      #info-popup.overlayed
+        .overlay
+
+        #info-popup-container
+          #info-popup-header
+            span.icon
+              include:svgo assets/info.svg
+
+            h3.name #{name}
+
+            span.icon-button.btn-info-popup-close
+              include:svgo assets/close.svg
+
+          #info-popup-content
+            span.version v#{version}
+
+            span #{description}
+
+            span 
+              | by 
+              a(href=author.url target="_blank" rel="noreferrer") #{author.name}
+
 
     script
       include:terser js/index.js
