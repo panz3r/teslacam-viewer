@@ -1,4 +1,5 @@
 import { TeslaCamClip } from "./teslacam";
+import { checkForUpdates } from "./updater";
 
 const screenSetup = document.querySelector("#setup-screen");
 const screenPlayer = document.querySelector("#player-screen");
@@ -387,3 +388,5 @@ function handleClipSelected(evt) {
 
   sidebarClose();
 }
+
+checkForUpdates();
