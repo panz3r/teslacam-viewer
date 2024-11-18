@@ -130,8 +130,14 @@ html(lang="en")
               a(href=author.url target="_blank" rel="noreferrer") #{author.name}
 
             span
-              a(href=homepage target="_blank" rel="noreferrer") Source Code
+              a#repository-link(href=homepage target="_blank" rel="noreferrer") Source Code
 
+            span#update-banner.hidden
+              span 
+                b New version available!
+                |  Click link below and download it
+              br
+              a#repository-release(target="_blank" rel="noreferrer") v-next
 
     script
       include:terser js/index.js
