@@ -1,7 +1,7 @@
 {
   "name": "TeslaCam Viewer",
   "version": "1.0.0",
-  "description": "Simple Web-based Tesla Dashcam video Viewer",
+  "description": "Simple Web-based Tesla Dashcam video viewer",
   "keywords": [],
   "author": {
     "name": "Mattia Panzeri",
