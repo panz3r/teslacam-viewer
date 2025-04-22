@@ -32,6 +32,8 @@ const frontVideoPlayer = document.querySelector("#video-players .video-front");
 const backVideoPlayer = document.querySelector("#video-players .video-back");
 const leftVideoPlayer = document.querySelector("#video-players .video-left");
 const rightVideoPlayer = document.querySelector("#video-players .video-right");
+const leftPillarVideoPlayer = document.querySelector("#video-players .video-left-pillar");
+const rightPillarVideoPlayer = document.querySelector("#video-players .video-right-pillar");
 
 let clipFiles = [];
 let currentClipIndex = -1;
@@ -257,6 +259,30 @@ function loadClipVideos() {
   leftVideoPlayer.src = currentClipVideos.left;
   rightVideoPlayer.src = currentClipVideos.right;
   backVideoPlayer.src = currentClipVideos.back;
+
+  if (currentClipVideos.leftPillar) {
+    leftPillarVideoPlayer.src = currentClipVideos.leftPillar;
+
+    document.querySelectorAll("#video-players .video-left-pillar").forEach((el) => {
+      el.classList.remove("hidden");
+    });
+  } else {
+    document.querySelectorAll("#video-players .video-left-pillar").forEach((el) => {
+      el.classList.add("hidden");
+    });
+  }
+
+  if (currentClipVideos.rightPillar) {
+    rightPillarVideoPlayer.src = currentClipVideos.rightPillar;
+
+    document.querySelectorAll("#video-players .video-right-pillar").forEach((el) => {
+      el.classList.remove("hidden");
+    });
+  } else {
+    document.querySelectorAll("#video-players .video-right-pillar").forEach((el) => {
+      el.classList.add("hidden");
+    });
+  }
 
   return true;
 }

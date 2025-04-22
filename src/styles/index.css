@@ -101,7 +101,7 @@ code {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .icon,
@@ -281,11 +281,21 @@ code {
 }
 
 #video-players .video-left {
-  top: 25%;
+  top: 55%;
   left: 0;
 }
 
 #video-players .video-right {
+  top: 55%;
+  right: 0;
+}
+
+#video-players .video-left-pillar {
+  top: 25%;
+  left: 0;
+}
+
+#video-players .video-right-pillar {
   top: 25%;
   right: 0;
 }
@@ -347,6 +357,16 @@ code {
 
 .video-label.video-right {
   align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.video-label.video-left-pillar {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.video-label.video-right-pillar {
+  align-items: flex-start;
   justify-content: flex-end;
 }
 

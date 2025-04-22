@@ -8,6 +8,8 @@ export class TeslaCamClip {
   backVideos = [];
   leftRepeaterVideos = [];
   rightRepeaterVideos = [];
+  leftPillarVideos = [];
+  rightPillarrVideos = [];
 
   currentVideosIndex = -1;
   totalVideosCount = -1;
@@ -36,6 +38,8 @@ export class TeslaCamClip {
     this.backVideos = sortedFiles.filter((file) => file.name.endsWith("-back.mp4"));
     this.leftRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("-left_repeater.mp4"));
     this.rightRepeaterVideos = sortedFiles.filter((file) => file.name.endsWith("right_repeater.mp4"));
+    this.leftPillarVideos = sortedFiles.filter((file) => file.name.endsWith("-left_pillar.mp4"));
+    this.rightPillarVideos = sortedFiles.filter((file) => file.name.endsWith("right_pillar.mp4"));
 
     this.totalVideosCount = Math.min(
       this.frontVideos.length,
@@ -83,6 +87,8 @@ export class TeslaCamClip {
       back: this.backVideos[this.currentVideosIndex].webkitRelativePath,
       left: this.leftRepeaterVideos[this.currentVideosIndex].webkitRelativePath,
       right: this.rightRepeaterVideos[this.currentVideosIndex].webkitRelativePath,
+      leftPillar: this.leftPillarVideos?.[this.currentVideosIndex]?.webkitRelativePath ?? null,
+      rightPillar: this.rightPillarVideos?.[this.currentVideosIndex]?.webkitRelativePath ?? null
     };
   }
 
